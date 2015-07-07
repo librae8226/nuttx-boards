@@ -105,13 +105,13 @@
  */
 
 #define GPIO_LED1       (GPIO_OUTPUT | GPIO_CNF_OUTPP | GPIO_MODE_50MHz|\
-                         GPIO_OUTPUT_SET | GPIO_PORTA | GPIO_PIN6)
+                         GPIO_OUTPUT_SET | GPIO_PORTC | GPIO_PIN6)
 #define GPIO_LED2       (GPIO_OUTPUT | GPIO_CNF_OUTPP | GPIO_MODE_50MHz|\
-                         GPIO_OUTPUT_SET | GPIO_PORTA | GPIO_PIN7)
+                         GPIO_OUTPUT_SET | GPIO_PORTC | GPIO_PIN6)
 #define GPIO_LED3       (GPIO_OUTPUT | GPIO_CNF_OUTPP | GPIO_MODE_50MHz|\
-                         GPIO_OUTPUT_SET | GPIO_PORTB | GPIO_PIN12)
+                         GPIO_OUTPUT_SET | GPIO_PORTC | GPIO_PIN7)
 #define GPIO_LED4       (GPIO_OUTPUT | GPIO_CNF_OUTPP | GPIO_MODE_50MHz|\
-                         GPIO_OUTPUT_SET | GPIO_PORTB | GPIO_PIN13)
+                         GPIO_OUTPUT_SET | GPIO_PORTC | GPIO_PIN8)
 
 
 /* Buttons **************************************************************************/
