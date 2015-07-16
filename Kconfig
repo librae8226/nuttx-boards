@@ -42,6 +42,14 @@ config ARCH_BOARD_AVR32DEV1
 		Atmel website.  STATUS: This port is functional but very basic.  There
 		are configurations for NSH and the OS test.
 
+config ARCH_BOARD_BSC
+	bool "Brain Sense Controller BR864 (STM32F107)"
+	depends on ARCH_CHIP_STM32F107VC
+	select ARCH_HAVE_LEDS
+	select ARCH_HAVE_BUTTONS
+	---help---
+		This port uses the Brain Sense Controller BR864 STM32F107RCT6 board.
+
 config ARCH_BOARD_C5471EVM
 	bool "Spectrum Digital C5471 evaluation board"
 	depends on ARCH_CHIP_C5471
@@ -1216,6 +1224,7 @@ config ARCH_BOARD
 	default "amber"                    if ARCH_BOARD_AMBER
 	default "arduino-due"              if ARCH_BOARD_ARDUINO_DUE
 	default "avr32dev1"                if ARCH_BOARD_AVR32DEV1
+	default "bsc"                      if ARCH_BOARD_BSC
 	default "c5471evm"                 if ARCH_BOARD_C5471EVM
 	default "cloudctrl"                if ARCH_BOARD_CLOUDCTRL
 	default "colibri"                  if ARCH_BOARD_COLIBRI
@@ -1394,13 +1403,16 @@ endif
 if ARCH_BOARD_AVR32DEV1
 source "configs/avr32dev1/Kconfig"
 endif
+if ARCH_BOARD_BSC
+source "configs/bsc/Kconfig"
+endif
 if ARCH_BOARD_C5471EVM
 source "configs/c5471evm/Kconfig"
 endif
 if ARCH_BOARD_CLOUDCTRL
 source "configs/cloudctrl/Kconfig"
 endif
-if ARCH_BOARD_CLOUDCTRL
+if ARCH_BOARD_COLIBRI
 source "configs/colibri/Kconfig"
 endif
 if ARCH_BOARD_COMPALE86
