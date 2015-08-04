@@ -2,12 +2,6 @@
 
 echo "Tool URL: https://github.com/texane/stlink"
 
-echo "flash:   " `st-info --flash`
-echo "sram:    " `st-info --sram`
-echo "descr:   " `st-info --descr`
-echo "pagesize:" `st-info --pagesize`
-echo "chipid:  " `st-info --chipid`
-
 if [ $1null = 'null' ]; then
 	file=nuttx.bin
 else
