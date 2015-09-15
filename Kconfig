@@ -43,12 +43,12 @@ config ARCH_BOARD_AVR32DEV1
 		are configurations for NSH and the OS test.
 
 config ARCH_BOARD_BSC
-	bool "Brain Sense Controller BR864 (STM32F107)"
+	bool "Brain Sense Controller BS-864 (STM32F107)"
 	depends on ARCH_CHIP_STM32F107VC
 	select ARCH_HAVE_LEDS
 	select ARCH_HAVE_BUTTONS
 	---help---
-		This port uses the Brain Sense Controller BR864 STM32F107RCT6 board.
+		This port uses the Brain Sense Controller BS-864 STM32F107RCT6 board.
 
 config ARCH_BOARD_C5471EVM
 	bool "Spectrum Digital C5471 evaluation board"

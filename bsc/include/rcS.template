@@ -5,3 +5,5 @@ echo "rcS: Mounted /proc"
 #mkfatfs /dev/ram2
 #mount -t vfat /dev/ram2 /tmp
 #echo "rcS: Mounted /tmp"
+
+bscapp
