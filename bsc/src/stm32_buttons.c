@@ -62,7 +62,7 @@
 
 static const uint16_t g_buttons[NUM_BUTTONS] =
 {
-  GPIO_SW2, GPIO_SW3, GPIO_SW4
+  GPIO_SW8
 };
 
 /****************************************************************************

@@ -83,21 +83,6 @@
 
 static void led_onbits(unsigned int clrbits)
 {
-  if ((clrbits & BOARD_LED1_BIT) != 0)
-    {
-      stm32_gpiowrite(GPIO_LED1, false);
-    }
-
-  if ((clrbits & BOARD_LED2_BIT) != 0)
-    {
-      stm32_gpiowrite(GPIO_LED2, false);
-    }
-
-  if ((clrbits & BOARD_LED3_BIT) != 0)
-    {
-      stm32_gpiowrite(GPIO_LED3, false);
-    }
-
   if ((clrbits & BOARD_LED4_BIT) != 0)
     {
       stm32_gpiowrite(GPIO_LED4, false);
@@ -114,22 +99,7 @@ static void led_onbits(unsigned int clrbits)
 
 static void led_offbits(unsigned int clrbits)
 {
-  if ((clrbits & BOARD_LED1_BIT) != 0)
-    {
-      stm32_gpiowrite(GPIO_LED1, true);
-    }
-
-  if ((clrbits & BOARD_LED2_BIT) != 0)
-    {
-      stm32_gpiowrite(GPIO_LED2, true);
-    }
-
-  if ((clrbits & BOARD_LED3_BIT) != 0)
-    {
-      stm32_gpiowrite(GPIO_LED3, true);
-    }
-
-  if ((clrbits & BOARD_LED4_BIT) != 0)
+   if ((clrbits & BOARD_LED4_BIT) != 0)
     {
       stm32_gpiowrite(GPIO_LED4, true);
     }
@@ -149,11 +119,6 @@ static void led_offbits(unsigned int clrbits)
 
 void stm32_ledinit(void)
 {
-  /* Configure LED1-4 GPIOs for output.  Initial state is OFF */
-
-  stm32_configgpio(GPIO_LED1);
-  stm32_configgpio(GPIO_LED2);
-  stm32_configgpio(GPIO_LED3);
   stm32_configgpio(GPIO_LED4);
 }
 
@@ -183,26 +148,6 @@ void board_led_on(int led)
 {
   switch (led)
     {
-    case 0:
-      led_offbits(BOARD_LED2_BIT | BOARD_LED3_BIT |BOARD_LED4_BIT);
-      led_onbits(BOARD_LED1_BIT);
-      break;
-
-    case 1:
-      led_offbits(BOARD_LED1_BIT | BOARD_LED3_BIT |BOARD_LED4_BIT);
-      led_onbits(BOARD_LED2_BIT);
-      break;
-
-    case 2:
-      led_offbits(BOARD_LED3_BIT |BOARD_LED4_BIT);
-      led_onbits(BOARD_LED1_BIT | BOARD_LED2_BIT);
-      break;
-
-    case 3:
-      led_offbits(BOARD_LED1_BIT | BOARD_LED2_BIT |BOARD_LED4_BIT);
-      led_onbits(BOARD_LED3_BIT);
-      break;
-
     case 4:
       stm32_gpiowrite(GPIO_LED4, false);
       break;
@@ -236,12 +181,6 @@ void board_led_off(int led)
 {
   switch (led)
     {
-    case 0:
-    case 1:
-    case 2:
-    case 3:
-      break;
-
     case 4:
       stm32_gpiowrite(GPIO_LED4, true);
       break;
@@ -270,18 +209,6 @@ void stm32_setled(int led, bool ledon)
 
   switch (led)
     {
-      case BOARD_LED1:
-        pinset = GPIO_LED1;
-        break;
-
-      case BOARD_LED2:
-        pinset = GPIO_LED2;
-        break;
-
-      case BOARD_LED3:
-        pinset = GPIO_LED3;
-        break;
-
       case BOARD_LED4:
 #ifndef CONFIG_ARCH_LEDS
         pinset = GPIO_LED4;

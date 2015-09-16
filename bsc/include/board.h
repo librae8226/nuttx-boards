@@ -64,30 +64,15 @@
 #  error Unregnized STM32 chip
 #endif
 
-/* LED definitions ******************************************************************/
-/* There are four LEDs on the ViewTool STM32F103/F107 board that can be controlled
- * by software:  LED1 through LED4.  All pulled high and can be illuminated by
- * driving the output to low
- *
- *   LED1 PA6
- *   LED2 PA7
- *   LED3 PB12
- *   LED4 PB13
+/*
+ * LED definitions
  */
 
-/* LED index values for use with stm32_setled() */
-
-#define BOARD_LED1        0
-#define BOARD_LED2        1
-#define BOARD_LED3        2
 #define BOARD_LED4        3
-#define BOARD_NLEDS       4
+#define BOARD_NLEDS       1
 
 /* LED bits for use with stm32_setleds() */
 
-#define BOARD_LED1_BIT    (1 << BOARD_LED1)
-#define BOARD_LED2_BIT    (1 << BOARD_LED2)
-#define BOARD_LED3_BIT    (1 << BOARD_LED3)
 #define BOARD_LED4_BIT    (1 << BOARD_LED4)
 
 /* These LEDs are not used by the board port unless CONFIG_ARCH_LEDS is
@@ -114,21 +99,11 @@
  */
 
 /* Buttons **************************************************************************/
-/* All pulled high and will be sensed low when depressed.
- *
- *   SW2 PC11  Needs J42 closed
- *   SW3 PC12  Needs J43 closed
- *   SW4 PA0   Needs J44 closed
- */
 
-#define BUTTON_SW2        0
-#define BUTTON_SW3        1
-#define BUTTON_SW4        2
-#define NUM_BUTTONS       3
+#define BUTTON_SW8        0
+#define NUM_BUTTONS       1
 
-#define BUTTON_SW2_BIT    (1 << BUTTON_SW2)
-#define BUTTON_SW3_BIT    (1 << BUTTON_SW3)
-#define BUTTON_SW4_BIT    (1 << BUTTON_SW4)
+#define BUTTON_SW8_BIT    (1 << BUTTON_SW8)
 
 /************************************************************************************
  * Public Data
@@ -170,9 +145,31 @@ void stm32_boardinitialize(void);
  ************************************************************************************/
 
 #ifndef CONFIG_ARCH_LEDS
-void up_setled(int led, bool ledon);
-void up_setleds(uint8_t ledset);
+void stm32_ledinit(void);
+void stm32_setled(int led, bool ledon);
+void stm32_setleds(uint8_t ledset);
 #endif
+
+/************************************************************************************
+ * Relay control functions
+ *
+ * Description:
+ *   Non-standard functions for relay control from the BS-864 board.
+ *
+ *   NOTE:  These must match the prototypes in include/nuttx/arch.h
+ *
+ ************************************************************************************/
+
+void relays_setstat(int relays, bool stat);
+bool relays_getstat(int relays);
+void relays_setstats(uint32_t relays_stat);
+uint32_t relays_getstats(void);
+void relays_onoff(int relays, uint32_t mdelay);
+void relays_onoffs(uint32_t relays_stat, uint32_t mdelay);
+void relays_resetmode(int relays);
+void relays_powermode(int relays);
+void relays_resetmodes(uint32_t relays_stat);
+void relays_powermodes(uint32_t relays_stat);
 
 #undef EXTERN
 #if defined(__cplusplus)

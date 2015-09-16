@@ -3,7 +3,7 @@
  *
  *   Copyright (C) 2012 Gregory Nutt. All rights reserved.
  *   Author: Gregory Nutt <gnutt@nuttx.org>
- *           Darcy Gong <darcy.gong@gmail.com>
+ *           Librae <librae@linkgo.io>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,8 +49,6 @@
 
 #include "bsc_stm32f107.h"
 
-#ifdef CONFIG_ARCH_RELAYS
-
 /****************************************************************************
  * Pre-processor Definitions
  ****************************************************************************/
@@ -64,101 +62,15 @@
  ****************************************************************************/
 
 static uint32_t g_relays_stat = 0;
-static bool g_relays_init = false;
 
 static const uint16_t g_relays[NUM_RELAYS] =
 {
-  GPIO_RELAYS_R01
-#ifdef GPIO_RELAYS_R02
-  , GPIO_RELAYS_R02
-#endif
-#ifdef GPIO_RELAYS_R03
-  , GPIO_RELAYS_R03
-#endif
-#ifdef GPIO_RELAYS_R04
-  , GPIO_RELAYS_R04
-#endif
-#ifdef GPIO_RELAYS_R05
-  , GPIO_RELAYS_R05
-#endif
-#ifdef GPIO_RELAYS_R06
-  , GPIO_RELAYS_R06
-#endif
-#ifdef GPIO_RELAYS_R07
-  , GPIO_RELAYS_R07
-#endif
-#ifdef GPIO_RELAYS_R08
-  , GPIO_RELAYS_R08
-#endif
-#ifdef GPIO_RELAYS_R09
-  , GPIO_RELAYS_R09
-#endif
-#ifdef GPIO_RELAYS_R10
-  , GPIO_RELAYS_R10
-#endif
-#ifdef GPIO_RELAYS_R11
-  , GPIO_RELAYS_R11
-#endif
-#ifdef GPIO_RELAYS_R12
-  , GPIO_RELAYS_R12
-#endif
-#ifdef GPIO_RELAYS_R13
-  , GPIO_RELAYS_R13
-#endif
-#ifdef GPIO_RELAYS_R14
-  , GPIO_RELAYS_R14
-#endif
-#ifdef GPIO_RELAYS_R15
-  , GPIO_RELAYS_R15
-#endif
-#ifdef GPIO_RELAYS_R16
-  , GPIO_RELAYS_R16
-#endif
-#ifdef GPIO_RELAYS_R17
-  , GPIO_RELAYS_R17
-#endif
-#ifdef GPIO_RELAYS_R18
-  , GPIO_RELAYS_R18
-#endif
-#ifdef GPIO_RELAYS_R19
-  , GPIO_RELAYS_R19
-#endif
-#ifdef GPIO_RELAYS_R20
-  , GPIO_RELAYS_R20
-#endif
-#ifdef GPIO_RELAYS_R21
-  , GPIO_RELAYS_R21
-#endif
-#ifdef GPIO_RELAYS_R22
-  , GPIO_RELAYS_R22
-#endif
-#ifdef GPIO_RELAYS_R23
-  , GPIO_RELAYS_R23
-#endif
-#ifdef GPIO_RELAYS_R24
-  , GPIO_RELAYS_R24
-#endif
-#ifdef GPIO_RELAYS_R25
-  , GPIO_RELAYS_R25
-#endif
-#ifdef GPIO_RELAYS_R26
-  , GPIO_RELAYS_R26
-#endif
-#ifdef GPIO_RELAYS_R27
-  , GPIO_RELAYS_R27
-#endif
-#ifdef GPIO_RELAYS_R28
-  , GPIO_RELAYS_R28
-#endif
-#ifdef GPIO_RELAYS_R29
-  , GPIO_RELAYS_R29
-#endif
-#ifdef GPIO_RELAYS_R30
-  , GPIO_RELAYS_R30
-#endif
-#ifdef GPIO_RELAYS_R31
-  , GPIO_RELAYS_R31
-#endif
+  GPIO_RELAYS_R01,
+  GPIO_RELAYS_R02,
+  GPIO_RELAYS_R03,
+  GPIO_RELAYS_R04,
+  GPIO_RELAYS_R05,
+  GPIO_RELAYS_R06,
 };
 
 /****************************************************************************
@@ -169,32 +81,11 @@ static const uint16_t g_relays[NUM_RELAYS] =
  * Public Functions
  ****************************************************************************/
 
-void up_relaysinit(void)
-{
-  int i;
-
-  if (g_relays_init)
-    {
-      return;
-    }
-
-  /* Configure the GPIO pins as inputs.  NOTE that EXTI interrupts are
-   * configured for some pins but NOT used in this file
-   */
-
-  for (i = 0; i < NUM_RELAYS; i++)
-    {
-      stm32_configgpio(g_relays[i]);
-      stm32_gpiowrite(g_relays[i], false);
-    }
-
-  g_relays_init = true;
-}
-
 void relays_setstat(int relays,bool stat)
 {
   if ((unsigned)relays < NUM_RELAYS)
     {
+      stm32_configgpio(g_relays[relays]);
       stm32_gpiowrite(g_relays[relays], stat);
       if (!stat)
         {
@@ -280,5 +171,3 @@ void relays_powermodes(uint32_t relays_stat)
 {
   relays_onoffs(relays_stat, RELAYS_POWER_MTIME);
 }
-
-#endif /* CONFIG_ARCH_BUTTONS */
