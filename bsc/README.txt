@@ -2,7 +2,7 @@ README
 ======
 
   This README discusses issues unique to NuttX configurations for the
-  Brain Sense Controller STM32F107 board - BR864.
+  Brain Sense Controller STM32F107 board: BS-864.
 
 Contents
 ========
