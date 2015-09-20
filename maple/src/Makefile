@@ -37,7 +37,7 @@
 -include $(TOPDIR)/Make.defs
 
 ASRCS =
-CSRCS = stm32_boot.c stm32_leds.c stm32_usbdev.c stm32_spi.c
+CSRCS = stm32_boot.c stm32_leds.c stm32_usbdev.c stm32_spi.c stm32_adc.c stm32_nsh.c
 
 ifeq ($(CONFIG_NX_LCDDRIVER),y)
 CSRCS += stm32_lcd.c
