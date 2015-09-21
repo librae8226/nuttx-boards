@@ -187,5 +187,8 @@ int stm32_sdinitialize(int minor);
 int stm32_mpl115ainitialize(FAR const char *devpath);
 #endif
 
+int stm32_adc_initialize(void);
+int board_app_initialize(void);
+
 #endif  /* __ASSEMBLY__ */
 #endif /* __CONFIGS_BSC_STM32F107_SRC_INTERNAL_H */

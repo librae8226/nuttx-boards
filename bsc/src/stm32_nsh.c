@@ -1,7 +1,7 @@
 /****************************************************************************
  * config/bsc/src/stm32_nsh.c
  *
- *   Copyright (C) 2013 Gregory Nutt. All rights reserved.
+ *   Copyright (C) 2012 Gregory Nutt. All rights reserved.
  *   Author: Gregory Nutt <gnutt@nuttx.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,31 +39,21 @@
 
 #include <nuttx/config.h>
 
-#include <sys/types.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include <syslog.h>
+#include <errno.h>
 
 #include <nuttx/board.h>
 
+#include "stm32.h"
 #include "bsc_stm32f107.h"
 
 /****************************************************************************
  * Pre-processor Definitions
  ****************************************************************************/
+
 /* Configuration ************************************************************/
-
-/* Default MMC/SD SLOT number */
-
-#ifdef HAVE_MMCSD
-#  if defined(CONFIG_NSH_MMCSDSLOTNO) && CONFIG_NSH_MMCSDSLOTNO != BSC_MMCSD_SLOTNO
-#    error "Only one MMC/SD slot:  BSC_MMCSD_SLOTNO"
-#    undef  CONFIG_NSH_MMCSDSLOTNO
-#    define CONFIG_NSH_MMCSDSLOTNO BSC_MMCSD_SLOTNO
-#  endif
-
-#  ifndef CONFIG_NSH_MMCSDSLOTNO
-#    define CONFIG_NSH_MMCSDSLOTNO BSC_MMCSD_SLOTNO
-#  endif
-#endif
 
 /****************************************************************************
  * Public Functions
@@ -75,17 +65,30 @@
  * Description:
  *   Perform architecture specific initialization
  *
+ *   CONFIG_NSH_ARCHINIT=y :
+ *     Called from the NSH library
+ *
+ *   CONFIG_BOARD_INITIALIZE=y, CONFIG_NSH_LIBRARY=y, &&
+ *   CONFIG_NSH_ARCHINIT=n :
+ *     Called from board_initialize().
+ *
  ****************************************************************************/
 
 int board_app_initialize(void)
 {
-#ifdef CONFIG_MPL115A
-  stm32_mpl115ainitialize("/dev/press");
+#if defined(CONFIG_ADC)
+  int ret;
 #endif
 
-#ifdef HAVE_MMCSD
-  return stm32_sdinitialize(CONFIG_NSH_MMCSDSLOTNO);
-#else
-  return OK;
+#ifdef CONFIG_ADC
+  /* Configure on-board ADCs if ADC support has been selected. */
+
+  ret = stm32_adc_initialize();
+  if (ret != OK)
+    {
+      syslog(LOG_ERR, "ERROR: Failed to initialize ADC: %d\n", ret);
+    }
 #endif
+
+  return OK;
 }

@@ -3,7 +3,6 @@
  *
  *   Copyright (C) 2011-2012 Gregory Nutt. All rights reserved.
  *   Author: Gregory Nutt <gnutt@nuttx.org>
- *           Librae <librae@linkgo.io>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,9 +47,7 @@
 #include <arch/board/board.h>
 
 #include "chip.h"
-#include "up_arch.h"
-
-#include "stm32_pwm.h"
+#include "stm32_adc.h"
 #include "bsc_stm32f107.h"
 
 #ifdef CONFIG_ADC
@@ -58,6 +55,7 @@
 /************************************************************************************
  * Pre-processor Definitions
  ************************************************************************************/
+
 /* Configuration ********************************************************************/
 /* Up to 3 ADC interfaces are supported */
 
@@ -86,21 +84,12 @@
  * Private Data
  ************************************************************************************/
 
-/* Identifying number of each ADC channel. The only internal signal for ADC testing
- * is the potentiometer input:
- *
- *   ADC1_IN10(PC0) Potentiometer
- *
- * External signals are also available on CON5 CN14:
- *
- *  ADC_IN8 (PB0) CON5 CN14 Pin2
- *  ADC_IN9 (PB1) CON5 CN14 Pin1
- */
+/* Identifying number of each ADC channel: Variable Resistor. */
 
 #ifdef CONFIG_STM32_ADC1
 static const uint8_t  g_chanlist[ADC1_NCHANNELS] = {10, 12, 13, 9};
 
-/* Configurations of pins used by each ADC channel */
+/* Configurations of pins used by each ADC channels */
 
 static const uint32_t g_pinlist[ADC1_NCHANNELS]  = {GPIO_ADC12_IN10, GPIO_ADC12_IN12, GPIO_ADC12_IN13, GPIO_ADC12_IN9};
 #endif
@@ -123,6 +112,19 @@ static const uint32_t g_pinlist[ADC1_NCHANNELS]  = {GPIO_ADC12_IN10, GPIO_ADC12_
  ************************************************************************************/
 
 int board_adc_setup(void)
+{
+  return stm32_adc_initialize();
+}
+
+/************************************************************************************
+ * Name: stm32_adc_initialize
+ *
+ * Description:
+ *   Called at application startup time to initialize the ADC functionality.
+ *
+ ************************************************************************************/
+
+int stm32_adc_initialize(void)
 {
 #ifdef CONFIG_STM32_ADC1
   static bool initialized = false;
