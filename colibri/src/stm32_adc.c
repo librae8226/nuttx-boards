@@ -1,9 +1,8 @@
 /************************************************************************************
- * configs/maple/src/maple-internal.h
+ * configs/bsc/src/stm32_adc.c
  *
- *   Copyright (C) 2013 Gregory Nutt. All rights reserved.
- *   Author: Laurent Latil <laurent@latil.nom.fr>
- *           Librae <librae8226@gmail.com>
+ *   Copyright (C) 2011-2012 Gregory Nutt. All rights reserved.
+ *   Author: Gregory Nutt <gnutt@nuttx.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,97 +33,147 @@
  *
  ************************************************************************************/
 
-#ifndef __CONFIGS_MAPLE_SRC_MAPLE_INTERNAL_H
-#define __CONFIGS_MAPLE_SRC_MAPLE_INTERNAL_H
-
 /************************************************************************************
  * Included Files
  ************************************************************************************/
 
 #include <nuttx/config.h>
-#include <nuttx/compiler.h>
-#include <stdint.h>
+
+#include <errno.h>
+#include <debug.h>
+
+#include <nuttx/board.h>
+#include <nuttx/analog/adc.h>
+#include <arch/board/board.h>
+
+#include "chip.h"
+#include "stm32_adc.h"
+#include "colibri_stm32f107.h"
+
+#ifdef CONFIG_ADC
 
 /************************************************************************************
  * Pre-processor Definitions
  ************************************************************************************/
 
-/* How many SPI modules does this chip support? The LM3S6918 supports 2 SPI
- * modules (others may support more -- in such case, the following must be
- * expanded).
- */
+/* Configuration ********************************************************************/
+/* Up to 3 ADC interfaces are supported */
 
-#if STM32_NSPI < 1
-#  undef CONFIG_STM32_SPI1
-#  undef CONFIG_STM32_SPI2
-#elif STM32_NSPI < 2
-#  undef CONFIG_STM32_SPI2
+#if STM32_NADC < 3
+#  undef CONFIG_STM32_ADC3
 #endif
 
-/* GPIOs **************************************************************/
-/* GPIO settings for LEDs and USB */
-
-#ifdef CONFIG_MAPLE_MINI
-#  define GPIO_LED           (GPIO_OUTPUT|GPIO_CNF_OUTPP|GPIO_MODE_50MHz|\
-                              GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN1)
-#  define GPIO_USB_PULLUP    (GPIO_OUTPUT|GPIO_CNF_OUTPP|GPIO_MODE_50MHz|\
-                              GPIO_OUTPUT_SET|GPIO_PORTB|GPIO_PIN9)
-#else
-#  define GPIO_LED           (GPIO_OUTPUT|GPIO_CNF_OUTPP|GPIO_MODE_50MHz|\
-                              GPIO_OUTPUT_CLEAR|GPIO_PORTA|GPIO_PIN5)
-#  define GPIO_USB_PULLUP    (GPIO_OUTPUT|GPIO_CNF_OUTPP|GPIO_MODE_50MHz|\
-                              GPIO_OUTPUT_SET|GPIO_PORTC|GPIO_PIN12)
+#if STM32_NADC < 2
+#  undef CONFIG_STM32_ADC2
 #endif
 
-/* The Maple configuration has been used to very the Sharp Memory LCD
- * on a custom board.  These are pin definitions for that custom
- * board interface.  If you should decide to integrate the Sharp
- * Memory LCD with your Maple board, you may need to changes these
- * settings.
+#if STM32_NADC < 1
+#  undef CONFIG_STM32_ADC1
+#endif
+
+#if defined(CONFIG_STM32_ADC1) || defined(CONFIG_STM32_ADC2) || defined(CONFIG_STM32_ADC3)
+#ifndef CONFIG_STM32_ADC1
+#  warning "Channel information only available for ADC1"
+#endif
+
+/* The number of ADC channels in the conversion list */
+
+#define ADC1_NCHANNELS 4
+
+/************************************************************************************
+ * Private Data
+ ************************************************************************************/
+/* The Olimex STM32-P207 has a 10 Kohm potentiometer AN_TR connected to PC0
+ * ADC123_IN10
  */
 
-#define GPIO_MEMLCD_EXTCOMIN (GPIO_PORTA | GPIO_PIN13 | GPIO_OUTPUT_CLEAR | \
-                              GPIO_OUTPUT | GPIO_CNF_OUTPP | GPIO_MODE_50MHz)
-#define GPIO_MEMLCD_DISP     (GPIO_PORTA | GPIO_PIN14 | GPIO_OUTPUT_CLEAR | \
-                              GPIO_OUTPUT | GPIO_CNF_OUTPP | GPIO_MODE_50MHz)
-#define GPIO_MEMLCD_CS       (GPIO_PORTA | GPIO_PIN15 | GPIO_OUTPUT_CLEAR | \
-                              GPIO_OUTPUT | GPIO_CNF_OUTPP | GPIO_MODE_50MHz)
+/* Identifying number of each ADC channel: Variable Resistor. */
+
+#ifdef CONFIG_STM32_ADC1
+static const uint8_t  g_chanlist[ADC1_NCHANNELS] = {10, 8, 9, 15};
+
+/* Configurations of pins used byte each ADC channels */
+
+static const uint32_t g_pinlist[ADC1_NCHANNELS]  = {GPIO_ADC12_IN10, GPIO_ADC12_IN8, GPIO_ADC12_IN9, GPIO_ADC12_IN15};
+#endif
 
 /************************************************************************************
- * Public Types
+ * Private Functions
  ************************************************************************************/
-
-/************************************************************************************
- * Public data
- ************************************************************************************/
-
-#ifndef __ASSEMBLY__
 
 /************************************************************************************
  * Public Functions
  ************************************************************************************/
 
 /************************************************************************************
- * Name: stm32_spiinitialize
+ * Name: board_adc_setup
  *
  * Description:
- *   Called to configure SPI chip select GPIO pins.
+ *   All STM32 architectures must provide the following interface to work with
+ *   examples/adc.
  *
  ************************************************************************************/
 
-void stm32_spiinitialize(void);
+int board_adc_setup(void)
+{
+  return stm32_adc_initialize();
+}
 
 /************************************************************************************
- * Name: stm32_usbinitialize
+ * Name: stm32_adc_initialize
  *
  * Description:
- *   Called to setup USB-related GPIO pins.
+ *   Called at application startup time to initialize the ADC functionality.
  *
  ************************************************************************************/
 
-void stm32_usbinitialize(void);
+int stm32_adc_initialize(void)
+{
+#ifdef CONFIG_STM32_ADC1
+  static bool initialized = false;
+  struct adc_dev_s *adc;
+  int ret;
+  int i;
 
-int stm32_adc_initialize(void);
+  /* Check if we have already initialized */
 
-#endif /* __ASSEMBLY__ */
-#endif /* __CONFIGS_MAPLE_SRC_MAPLE_INTERNAL_H */
+  if (!initialized)
+    {
+      /* Configure the pins as analog inputs for the selected channels */
+
+      for (i = 0; i < ADC1_NCHANNELS; i++)
+        {
+          stm32_configgpio(g_pinlist[i]);
+        }
+
+      /* Call stm32_adcinitialize() to get an instance of the ADC interface */
+
+      adc = stm32_adcinitialize(1, g_chanlist, ADC1_NCHANNELS);
+      if (adc == NULL)
+        {
+          adbg("ERROR: Failed to get ADC interface\n");
+          return -ENODEV;
+        }
+
+      /* Register the ADC driver at "/dev/adc0" */
+
+      ret = adc_register("/dev/adc0", adc);
+      if (ret < 0)
+        {
+          adbg("adc_register failed: %d\n", ret);
+          return ret;
+        }
+
+      /* Now we are initialized */
+
+      initialized = true;
+    }
+
+  return OK;
+#else
+  return -ENOSYS;
+#endif
+}
+
+#endif /* CONFIG_STM32_ADC1 || CONFIG_STM32_ADC2 || CONFIG_STM32_ADC3 */
+#endif /* CONFIG_ADC */

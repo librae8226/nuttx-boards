@@ -40,7 +40,7 @@ CFLAGS += -I$(TOPDIR)/sched
 ASRCS =
 AOBJS = $(ASRCS:.S=$(OBJEXT))
 
-CSRCS = stm32_boot.c stm32_leds.c stm32_spi.c
+CSRCS = stm32_boot.c stm32_leds.c stm32_spi.c stm32_nsh.c stm32_adc.c
 
 ifeq ($(CONFIG_HAVE_CXX),y)
 CSRCS += stm32_cxxinitialize.c
@@ -72,10 +72,6 @@ endif
 
 ifeq ($(CONFIG_LCD_SSD1289),y) # F103
 CSRCS += stm32_ssd1289.c
-endif
-
-ifeq ($(CONFIG_NSH_ARCHINIT),y)
-CSRCS += stm32_nsh.c
 endif
 
 ifeq ($(CONFIG_USBMSC),y)

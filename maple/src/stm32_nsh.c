@@ -1,5 +1,5 @@
 /****************************************************************************
- * config/bsc/src/stm32_nsh.c
+ * config/maple/src/stm32_nsh.c
  *
  *   Copyright (C) 2012 Gregory Nutt. All rights reserved.
  *   Author: Gregory Nutt <gnutt@nuttx.org>
@@ -47,7 +47,7 @@
 #include <nuttx/board.h>
 
 #include "stm32.h"
-#include "colibri_stm32f107.h"
+#include "maple-internal.h"
 
 /****************************************************************************
  * Pre-processor Definitions
