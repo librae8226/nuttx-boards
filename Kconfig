@@ -47,6 +47,7 @@ config ARCH_BOARD_BSC
 	depends on ARCH_CHIP_STM32F107VC
 	select ARCH_HAVE_LEDS
 	select ARCH_HAVE_BUTTONS
+	select ARCH_HAVE_IRQBUTTONS
 	---help---
 		This port uses the Brain Sense Controller BS-864 STM32F107RCT6 board.
 
