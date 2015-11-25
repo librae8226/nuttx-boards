@@ -152,7 +152,7 @@ static void up_lcddispcontrol(bool on)
 #ifndef CONFIG_MEMLCD_EXTCOMIN_MODE_HW
 static void up_lcdsetpolarity(bool pol)
 {
-  stm32_gpiowrite(GPIO_LED, pol);
+  //stm32_gpiowrite(GPIO_LED, pol);
   stm32_gpiowrite(GPIO_MEMLCD_EXTCOMIN, pol);
 }
 #endif
